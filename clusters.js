@@ -1,15 +1,15 @@
 
 const clusters = {
 
-  data: getterSetter([], function(arrayOfArrays) {
-    var n = arrayOfArrays[0].length;
-    return (arrayOfArrays.map(function(array) {
-      return array.length == n;
+  data: getterSetter([], function(initialData) {
+    var n = initialData[0].coordinates.length;
+    return (initialData.map(function(array) {
+      return array.coordinates.length == n;
     }).reduce(function(boolA, boolB) { return (boolA & boolB) }, true));
   }),
 
   clusters: function() {
-    var pointsAndCentroids = kmeans(this.data(), {k: this.k(), iterations: this.iterations() });
+    var pointsAndCentroids = kmeans(this.data(), {k: this.k(), iterations: this.iterations(), singleCapacity: this.capacity() });
     var points = pointsAndCentroids.points;
     var centroids = pointsAndCentroids.centroids;
 
@@ -22,7 +22,7 @@ const clusters = {
   },
 
   k: getterSetter(undefined, function(value) { return ((value % 1 == 0) & (value > 0)) }),
-
+  capacity: getterSetter(undefined, function(value) { return ((value % 1 == 0) & (value > 0)) }),
   iterations: getterSetter(Math.pow(10, 3), function(value) { return ((value % 1 == 0) & (value > 0)) }),
 
 };
@@ -30,10 +30,11 @@ const clusters = {
 function kmeans(data, config) {
   // default k
   var k = config.k || Math.round(Math.sqrt(data.length / 2));
+  var singleCapacity = config.singleCapacity || 10;
   var iterations = config.iterations;
 
   // initialize point objects with data
-  var points = data.map(function(vector) { return new Point(vector) });
+  var points = data.map(function(vector) { return new Point(vector.coordinates, vector.capacity) });
 
   // intialize centroids randomly #AJ add randomly
   var centroids = [];
@@ -43,7 +44,7 @@ function kmeans(data, config) {
 
   // update labels and centroid locations until convergence
   for (var iter = 0; iter < iterations; iter++) {
-    points.forEach(function(point) { point.updateLabel(centroids) });
+    points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
     centroids.forEach(function(centroid) { centroid.updateLocation(points) });
   };
 
@@ -56,13 +57,19 @@ function kmeans(data, config) {
 };
 
 // objects
-function Point(location) {
+function Point(location, capacity) {
   var self = this;
   this.location = getterSetter(location);
   this.label = getterSetter();
-  this.updateLabel = function(centroids) {
-    var distancesSquared = centroids.map(function(centroid) {
-      return sumOfSquareDiffs(self.location(), centroid.location());
+  this.capacity = getterSetter(capacity);
+  this.updateLabel = function(centroids, points, groupCapacity) {
+    var distancesSquared = centroids
+    .map(function(centroid) {
+      centroid.isActive((groupCapacity - centroid.getUsedCapacity(points)) >= self.capacity());
+      return centroid;
+    })
+        .map(function(centroid) {
+      return centroid.isActive() ? sumOfSquareDiffs(self.location(), centroid.location()) : -1;
     });
     self.label(mindex(distancesSquared));
   };
@@ -72,10 +79,15 @@ function Centroid(initialLocation, label) {
   var self = this;
   this.location = getterSetter(initialLocation);
   this.label = getterSetter(label);
+  this.isActive = getterSetter();
   this.updateLocation = function(points) {
     var pointsWithThisCentroid = points.filter(function(point) { return point.label() == self.label() });
     if (pointsWithThisCentroid.length > 0) self.location(averageLocation(pointsWithThisCentroid));
   };
+  this.getUsedCapacity = function(points) {
+    var pointsWithThisCentroid = points.filter(function(point) { return point.label() == self.label() });
+    return pointsWithThisCentroid.reduce((acc, curr) => { return acc + curr.capacity() }, 0)
+  }
 };
 
 // convenience functions
@@ -96,10 +108,15 @@ function sumOfSquareDiffs(oneVector, anotherVector) {
 };
 
 function mindex(array) {
-  var min = array.reduce(function(a, b) {
+  var tmpArr = array.filter(x => x >= 0);
+  var min = tmpArr.reduce(function(a, b) {
     return Math.min(a, b);
-  });
-  return array.indexOf(min);
+  }, Number.MAX_VALUE);
+  if (tmpArr && tmpArr.length > 0) {
+    return array.indexOf(min);
+  } else {
+    return -1;
+  } 
 };
 
 function sumVectors(a, b) {
