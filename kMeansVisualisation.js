@@ -20,6 +20,8 @@ var icons = [];
 var index = 0;
 var coordinatesToFocus = [];
 
+var foundPoints = 0;
+
 function init() {
 	earth = new WE.map('earth_div');
 	colors = ['#f60404', '#f8e604', '#66ff33', '#000000', '#00ffcc', '#0039e6', '#b3b3cc', '#ff4dff'];
@@ -30,6 +32,8 @@ function init() {
 }
 
 function buildClusters(pointsArray) {
+	pointsArray.map(p=> foundPoints = foundPoints + p.length)
+	
 	var icon = icons.pop();
 	var carIndex = ++index;
 	pointsArray.map(points => {
@@ -46,8 +50,10 @@ function setFocusCoordinates(points) {
 
 function drawClusters() {
 	this.markers.map(marker => marker.addTo(earth));
-	earth.setZoom(2.5);
+	earth.setZoom(2);
 	earth.panTo(coordinatesToFocus, 1);
+	
+	console.log("przypisane miasta: " + foundPoints/2);
 }
 
 function removeMarkers() {

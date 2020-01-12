@@ -47,7 +47,7 @@ function kmeans(data, config) {
     points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
     centroids.forEach(function(centroid) { centroid.updateLocation(points) });
   };
-
+  
   // return points and centroids
   return {
     points: points,
