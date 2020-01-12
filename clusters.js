@@ -63,10 +63,18 @@ function Point(location, capacity) {
   this.label = getterSetter();
   this.capacity = getterSetter(capacity);
   this.updateLabel = function(centroids, points, groupCapacity) {
+    var isAnyActive = false;
     var distancesSquared = centroids
+    .map(function(centroid) {
+      var isActive = (groupCapacity - centroid.getUsedCapacity(points)) >= self.capacity();
+      isAnyActive = isAnyActive || isActive;
+      centroid.isActive(isActive);
+      return centroid;
+    })
         .map(function(centroid) {
-      return sumOfSquareDiffs(self.location(), centroid.location());
+      return (centroid.isActive() || !isAnyActive) ? sumOfSquareDiffs(self.location(), centroid.location()) : -1;
     });
+
     var centroidIndex = mindex(distancesSquared);
     var selectedCentroid = centroids[centroidIndex];
     var usedCapacity = selectedCentroid.getUsedCapacity(points);
@@ -77,6 +85,7 @@ function Point(location, capacity) {
         sortedPoints[0].label(-1);
       }
     }
+    
     self.label(centroidIndex);
   };
 };
@@ -85,6 +94,7 @@ function Centroid(initialLocation, label) {
   var self = this;
   this.location = getterSetter(initialLocation);
   this.label = getterSetter(label);
+  this.isActive = getterSetter();
   this.updateLocation = function(points) {
     var pointsWithThisCentroid = points.filter(function(point) { return point.label() == self.label() });
     if (pointsWithThisCentroid.length > 0) self.location(averageLocation(pointsWithThisCentroid));
@@ -113,7 +123,7 @@ function sumOfSquareDiffs(oneVector, anotherVector) {
 };
 
 function mindex(array) {
-  var tmpArr = array;
+  var tmpArr = array.filter(x => x >= 0);
   var min = tmpArr.reduce(function(a, b) {
     return Math.min(a, b);
   }, Number.MAX_VALUE);
