@@ -1,4 +1,5 @@
 const clusterMaker = clusters;
+const kMeansVisualisationMaker = kMeansVisualisation;
 
 //number of clusters, defaults to undefined
 clusterMaker.k(5);
@@ -18,5 +19,8 @@ clusterMaker.data([
         { coordinates: [10, 10], capacity: 2},
         { coordinates: [11, 12], capacity: 2}
     ]);
+var calculatedClusters = clusterMaker.clusters();
 
-console.log(clusterMaker.clusters());
+kMeansVisualisationMaker.init();
+calculatedClusters.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points));
+kMeansVisualisationMaker.drawClustersVisualisation();
