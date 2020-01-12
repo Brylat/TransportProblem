@@ -9,7 +9,9 @@ const clusters = {
   }),
 
   clusters: function() {
-    var pointsAndCentroids = kmeans(this.data(), {k: this.k(), iterations: this.iterations(), singleCapacity: this.capacity() });
+    var dataArray = this.data();
+    shuffleArray(dataArray);
+    var pointsAndCentroids = kmeans(dataArray, {k: this.k(), iterations: this.iterations(), singleCapacity: this.capacity() });
     var points = pointsAndCentroids.points;
     var centroids = pointsAndCentroids.centroids;
 
@@ -27,6 +29,15 @@ const clusters = {
 
 };
 
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
+}
+
 function kmeans(data, config) {
   // default k
   var k = config.k || Math.round(Math.sqrt(data.length / 2));
@@ -43,9 +54,11 @@ function kmeans(data, config) {
   };
 
   // update labels and centroid locations until convergence
-  for (var iter = 0; iter < iterations; iter++) {
+  var iter = 0;
+  while (iter < iterations) {
     points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
     centroids.forEach(function(centroid) { centroid.updateLocation(points) });
+    iter++;
   };
 
   // return points and centroids
@@ -74,18 +87,15 @@ function Point(location, capacity) {
         .map(function(centroid) {
       return (centroid.isActive() || !isAnyActive) ? sumOfSquareDiffs(self.location(), centroid.location()) : -1;
     });
-
     var centroidIndex = mindex(distancesSquared);
     var selectedCentroid = centroids[centroidIndex];
     var usedCapacity = selectedCentroid.getUsedCapacity(points);
-    while (usedCapacity + self.capacity > groupCapacity) {
+    while (usedCapacity + self.capacity() > groupCapacity) {
       var pointsInCentroid = points.filter(function(point) { return point.label() == selectedCentroid.label() });
       var sortedPoints = pointsInCentroid.sort((a, b) => a.capacity() - b.capacity());
-      if (sortedPoints.length > 0){
-        sortedPoints[0].label(-1);
-      }
+      sortedPoints[0].label(-1);
+      usedCapacity = selectedCentroid.getUsedCapacity(points);
     }
-    
     self.label(centroidIndex);
   };
 };

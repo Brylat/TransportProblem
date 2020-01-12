@@ -45,8 +45,6 @@ var pointsArray = [
         { coordinates: [50.723119, 23.251935], cityName:"Zamosc", capacity: 300} 
     ];
 	
-//todo usunac
-shuffleArray(pointsArray);
 
 clusterMaker.data(pointsArray);
 var calculatedClusters = clusterMaker.clusters();
@@ -61,13 +59,3 @@ kMeansVisualisationMaker.drawClustersVisualisation();
 //city distane matrix repository for easy retrieving route distance instead of geographical distance.
 cityDistanceMatrixRepository.init();
 console.log("Dystans wieliczka -> nowy targ " + cityDistanceMatrixRepository.getDistanceByStartEndCity("Wieliczka", "Nowy Targ"));
-
-
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
