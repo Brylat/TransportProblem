@@ -47,7 +47,7 @@ function kmeans(data, config) {
     points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
     centroids.forEach(function(centroid) { centroid.updateLocation(points) });
   };
-  
+
   // return points and centroids
   return {
     points: points,
@@ -64,14 +64,20 @@ function Point(location, capacity) {
   this.capacity = getterSetter(capacity);
   this.updateLabel = function(centroids, points, groupCapacity) {
     var distancesSquared = centroids
-    .map(function(centroid) {
-      centroid.isActive((groupCapacity - centroid.getUsedCapacity(points)) >= self.capacity());
-      return centroid;
-    })
         .map(function(centroid) {
-      return centroid.isActive() ? sumOfSquareDiffs(self.location(), centroid.location()) : -1;
+      return sumOfSquareDiffs(self.location(), centroid.location());
     });
-    self.label(mindex(distancesSquared));
+    var centroidIndex = mindex(distancesSquared);
+    var selectedCentroid = centroids[centroidIndex];
+    var usedCapacity = selectedCentroid.getUsedCapacity(points);
+    while (usedCapacity + self.capacity > groupCapacity) {
+      var pointsInCentroid = points.filter(function(point) { return point.label() == selectedCentroid.label() });
+      var sortedPoints = pointsInCentroid.sort((a, b) => a.capacity() - b.capacity());
+      if (sortedPoints.length > 0){
+        sortedPoints[0].label(-1);
+      }
+    }
+    self.label(centroidIndex);
   };
 };
 
@@ -79,7 +85,6 @@ function Centroid(initialLocation, label) {
   var self = this;
   this.location = getterSetter(initialLocation);
   this.label = getterSetter(label);
-  this.isActive = getterSetter();
   this.updateLocation = function(points) {
     var pointsWithThisCentroid = points.filter(function(point) { return point.label() == self.label() });
     if (pointsWithThisCentroid.length > 0) self.location(averageLocation(pointsWithThisCentroid));
@@ -108,7 +113,7 @@ function sumOfSquareDiffs(oneVector, anotherVector) {
 };
 
 function mindex(array) {
-  var tmpArr = array.filter(x => x >= 0);
+  var tmpArr = array;
   var min = tmpArr.reduce(function(a, b) {
     return Math.min(a, b);
   }, Number.MAX_VALUE);
