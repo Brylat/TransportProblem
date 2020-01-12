@@ -92,8 +92,15 @@ function Point(location, capacity) {
     var usedCapacity = selectedCentroid.getUsedCapacity(points);
     while (usedCapacity + self.capacity() > groupCapacity) {
       var pointsInCentroid = points.filter(function(point) { return point.label() == selectedCentroid.label() });
-      var sortedPoints = pointsInCentroid.sort((a, b) => a.capacity() - b.capacity());
-      sortedPoints[0].label(-1);
+      var farthestPoint = pointsInCentroid[0];
+      pointsInCentroid.forEach(curr => {
+        var currentFarthestPointDist = sumOfSquareDiffs(farthestPoint.location(), selectedCentroid.location());
+        var currentDist = sumOfSquareDiffs(curr.location(), selectedCentroid.location());
+        if (currentDist > currentFarthestPointDist) {
+          farthestPoint = curr;
+        }
+      });
+      farthestPoint.label(-1);
       usedCapacity = selectedCentroid.getUsedCapacity(points);
     }
     self.label(centroidIndex);
