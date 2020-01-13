@@ -18,7 +18,7 @@ const clusters = {
     return centroids.map(function(centroid) {
       return {
         centroid: centroid.location(),
-        points: points.filter(function(point) { return point.label() == centroid.label() }).map(function(point) { return point.location() }),
+        points: points.filter(function(point) { return point.label() == centroid.label() }).map(function(point) { return {location: point.location(), name: point.cityName()} }),
       };
     });
   },
@@ -45,7 +45,7 @@ function kmeans(data, config) {
   var iterations = config.iterations;
 
   // initialize point objects with data
-  var points = data.map(function(vector) { return new Point(vector.coordinates, vector.capacity) });
+  var points = data.map(function(vector) { return new Point(vector.coordinates, vector.capacity, vector.cityName) });
 
   // intialize centroids randomly #AJ add randomly
   var centroids = [];
@@ -70,11 +70,12 @@ function kmeans(data, config) {
 };
 
 // objects
-function Point(location, capacity) {
+function Point(location, capacity, cityName) {
   var self = this;
   this.location = getterSetter(location);
   this.label = getterSetter();
   this.capacity = getterSetter(capacity);
+  this.cityName = getterSetter(cityName);
   this.updateLabel = function(centroids, points, groupCapacity) {
     var isAnyActive = false;
     var distancesSquared = centroids

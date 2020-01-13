@@ -51,7 +51,7 @@ var calculatedClusters = clusterMaker.clusters();
 
 //draw clusters on map.
 kMeansVisualisationMaker.init();
-calculatedClusters.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points));
+calculatedClusters.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points.map(p => p.location)));
 kMeansVisualisationMaker.drawClustersVisualisation();
 
 //cityDistanceRetrieverClient.download(pointsArray); do not enable, will retrieve 30x30 cityDistanceMatrix from external api (870 requests).
