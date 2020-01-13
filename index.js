@@ -44,7 +44,9 @@ var pointsArray = [
         { coordinates: [49.299081, 19.949262], cityName:"Zakopane", capacity: 200},
         { coordinates: [50.723119, 23.251935], cityName:"Zamosc", capacity: 300} 
     ];
-	
+    
+    var startCity = { coordinates: [50.059008, 19.944942], cityName:"Krakow", capacity: 0};
+
 
 clusterMaker.data(pointsArray);
 var calculatedClusters = clusterMaker.clusters();
@@ -54,8 +56,15 @@ kMeansVisualisationMaker.init();
 calculatedClusters.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points.map(p => p.location)));
 kMeansVisualisationMaker.drawClustersVisualisation();
 
+///
+var testPoint = calculatedClusters[0].points;
+var singlePopulation = new Population(testPoint, startCity);
+singlePopulation.init();
+singlePopulation.evolve();
+
+console.log("done");
 //cityDistanceRetrieverClient.download(pointsArray); do not enable, will retrieve 30x30 cityDistanceMatrix from external api (870 requests).
 
 //city distane matrix repository for easy retrieving route distance instead of geographical distance.
-cityDistanceMatrixRepository.init();
-console.log("Dystans wieliczka -> nowy targ " + cityDistanceMatrixRepository.getDistanceByStartEndCity("Wieliczka", "Nowy Targ"));
+//cityDistanceMatrixRepository.init();
+//console.log("Dystans wieliczka -> nowy targ " + cityDistanceMatrixRepository.getDistanceByStartEndCity("Wieliczka", "Nowy Targ"));
