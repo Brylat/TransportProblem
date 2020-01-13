@@ -57,6 +57,7 @@ function kmeans(data, config) {
   var iter = 0;
   while (iter < iterations) {
     points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
+    points.filter(x => x.label() == -1).forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
     centroids.forEach(function(centroid) { centroid.updateLocation(points) });
     iter++;
   };
@@ -93,15 +94,11 @@ function Point(location, capacity, cityName) {
     var usedCapacity = selectedCentroid.getUsedCapacity(points);
     while (usedCapacity + self.capacity() > groupCapacity) {
       var pointsInCentroid = points.filter(function(point) { return point.label() == selectedCentroid.label() });
-      var farthestPoint = pointsInCentroid[0];
-      pointsInCentroid.forEach(curr => {
-        var currentFarthestPointDist = sumOfSquareDiffs(farthestPoint.location(), selectedCentroid.location());
-        var currentDist = sumOfSquareDiffs(curr.location(), selectedCentroid.location());
-        if (currentDist > currentFarthestPointDist) {
-          farthestPoint = curr;
-        }
-      });
-      farthestPoint.label(-1);
+      var sortedPoints = pointsInCentroid.sort((a, b) => a.capacity() - b.capacity());
+      if (sortedPoints.length > 0){
+        sortedPoints[0].label(-1);
+      }
+      sortedPoints[0].label(-1);
       usedCapacity = selectedCentroid.getUsedCapacity(points);
     }
     self.label(centroidIndex);
