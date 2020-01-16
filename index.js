@@ -1,6 +1,6 @@
 const clusterMaker = clusters;
 const kMeansVisualisationMaker = kMeansVisualisation;
-const cityDistanceMatrixRepository = cityDistanceMatrix;
+
 const cityDistanceRetrieverClient = cityDistanceClient;
 
 //number of clusters, defaults to undefined
@@ -80,5 +80,5 @@ console.log("Total distance: ", distanceSummary);
 //cityDistanceRetrieverClient.download(pointsArray); do not enable, will retrieve 30x30 cityDistanceMatrix from external api (870 requests).
 
 //city distane matrix repository for easy retrieving route distance instead of geographical distance.
-//cityDistanceMatrixRepository.init();
+
 //console.log("Dystans wieliczka -> nowy targ " + cityDistanceMatrixRepository.getDistanceByStartEndCity("Wieliczka", "Nowy Targ"));

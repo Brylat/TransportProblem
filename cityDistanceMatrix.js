@@ -955,7 +955,13 @@ function initCityDistanceTwoDimensionArray(){
 }
 
 function getDistanceByStartEndCity(startCity, endCity) {
-	return JSON.parse(matrix[startCity][endCity]).distance;
+	try {
+		return JSON.parse(matrix[startCity][endCity]).distance;
+	} catch {
+		debugger;
+	}
+
+	
 }
 
 function getDurationByStartEndCity(startCity, endCity) {

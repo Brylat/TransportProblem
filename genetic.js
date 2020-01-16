@@ -6,7 +6,7 @@ function City(name, location) {
 function Population (initialData = [], startCity) {
     var self = this;
     this.initialData = initialData;
-    this.startCity = new City(startCity.name, startCity.coordinates);
+    this.startCity = new City(startCity.cityName, startCity.coordinates);
     this.count = 20;
     this.cityCount = initialData.length;
     this.paths = [];
@@ -18,8 +18,11 @@ function Population (initialData = [], startCity) {
     this.mutationRate = 0.05;
     this.crossSize = 2;
     this.bestDistanceEver = 999999999999999;
+    this.cityDistanceMatrixRepository = cityDistanceMatrix;
+
 
     this.init = () => {
+        this.cityDistanceMatrixRepository.init();
         this.initCities();
         this.initPaths();
         this.updateDistance();
@@ -56,10 +59,13 @@ function Population (initialData = [], startCity) {
         for(var i=0;i<this.count;i++){
             var sum = 0;
             for(j=0;j<this.cityCount-1;j++){
-                sum += sumOfSquareDiffs(this.cities[this.paths[i][j]].location, this.cities[this.paths[i][j + 1]].location);
+                //sum += sumOfSquareDiffs(this.cities[this.paths[i][j]].location, this.cities[this.paths[i][j + 1]].location);
+                sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.cities[this.paths[i][j]].name, this.cities[this.paths[i][j + 1]].name);
             }
-              sum += sumOfSquareDiffs(this.startCity.location, this.cities[0].location);
-              sum += sumOfSquareDiffs(this.cities[this.cities.length- 1].location, this.startCity.location);
+              //sum += sumOfSquareDiffs(this.startCity.location, this.cities[0].location);
+              sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.startCity.name, this.cities[0].name);
+              //sum += sumOfSquareDiffs(this.cities[this.cities.length- 1].location, this.startCity.location);
+              sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.cities[this.cities.length- 1].name, this.startCity.name);
 
             this.distances[i] = sum;
             if(sum < this.distances[this.bestPath]){
