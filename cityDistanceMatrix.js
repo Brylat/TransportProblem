@@ -958,7 +958,8 @@ function getDistanceByStartEndCity(startCity, endCity) {
 	try {
 		return JSON.parse(matrix[startCity][endCity]).distance;
 	} catch {
-		debugger;
+		console.error("Distance mtrix problem");
+		return 0;
 	}
 
 	
