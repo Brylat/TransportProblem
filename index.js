@@ -57,12 +57,26 @@ calculatedClusters.map(clusters => kMeansVisualisationMaker.buildClusters(cluste
 kMeansVisualisationMaker.drawClustersVisualisation();
 
 ///
-var testPoint = calculatedClusters[0].points;
-var singlePopulation = new Population(testPoint, startCity);
-singlePopulation.init();
-singlePopulation.evolve();
+let routeNumber = 0;
+let distanceSummary = 0;
+calculatedClusters.forEach(cluster => {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ROUTE ",routeNumber, "!!!!!!!!!!!!!!!!!!!");
+    const {points} = cluster;
+    var singlePopulation = new Population(points, startCity);
+    singlePopulation.init();
+    for(var i =0; i < 5-0; i++) {
+        singlePopulation.evolve();
+    }
+    console.log(startCity.cityName);
+    singlePopulation.paths[singlePopulation.bestPath].forEach(x => {console.log(singlePopulation.cities[x].name)});
+    console.log(startCity.cityName);
+    console.log("Distance: ", singlePopulation.bestDistanceEver);
+    distanceSummary += singlePopulation.bestDistanceEver;
+    routeNumber++;
+});
 
-console.log("done");
+console.log("Total distance: ", distanceSummary);
+
 //cityDistanceRetrieverClient.download(pointsArray); do not enable, will retrieve 30x30 cityDistanceMatrix from external api (870 requests).
 
 //city distane matrix repository for easy retrieving route distance instead of geographical distance.

@@ -1,6 +1,5 @@
 
 const clusters = {
-
   data: getterSetter([], function(initialData) {
     var n = initialData[0].coordinates.length;
     return (initialData.map(function(array) {
@@ -39,21 +38,17 @@ function shuffleArray(array) {
 }
 
 function kmeans(data, config) {
-  // default k
   var k = config.k || Math.round(Math.sqrt(data.length / 2));
   var singleCapacity = config.singleCapacity || 10;
   var iterations = config.iterations;
 
-  // initialize point objects with data
   var points = data.map(function(vector) { return new Point(vector.coordinates, vector.capacity, vector.cityName) });
 
-  // intialize centroids randomly #AJ add randomly
   var centroids = [];
   for (var i = 0; i < k; i++) {
     centroids.push(new Centroid(points[i % points.length].location(), i));
   };
 
-  // update labels and centroid locations until convergence
   var iter = 0;
   while (iter < iterations) {
     points.forEach(function(point) { point.updateLabel(centroids, points, singleCapacity) });
@@ -62,7 +57,6 @@ function kmeans(data, config) {
     iter++;
   };
 
-  // return points and centroids
   return {
     points: points,
     centroids: centroids
@@ -70,7 +64,6 @@ function kmeans(data, config) {
 
 };
 
-// objects
 function Point(location, capacity, cityName) {
   var self = this;
   this.location = getterSetter(location);
@@ -78,6 +71,7 @@ function Point(location, capacity, cityName) {
   this.capacity = getterSetter(capacity);
   this.cityName = getterSetter(cityName);
   this.updateLabel = function(centroids, points, groupCapacity) {
+    self.label(-1);
     var isAnyActive = false;
     var distancesSquared = centroids
     .map(function(centroid) {
@@ -120,7 +114,6 @@ function Centroid(initialLocation, label) {
   }
 };
 
-// convenience functions
 function getterSetter(initialValue, validator) {
   var thingToGetSet = initialValue;
   var isValid = validator || function(val) { return true };

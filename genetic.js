@@ -1,79 +1,25 @@
-/*
-* Kush Kumar Sharma
-* Apache License | Version 2.0, January 2004 | http://www.apache.org/licenses/
-*/
-
-var DEBUG = false;
-
-var cities = [];
-var totalCities = 15; //fact(25): 15511210043330985984000000 (~10^24)
-
-var recordDistance;
-var bestEver;
-
-var percent = 0;
-var iteration = 0;
-var totalIterations = 0;
-
-var pop;
-var populationCount = 10;
-
-//tested this model for values -
-//cities : 15
-//pop : 20
-//elitism : true | if enabled, no mutation for bestpath
-//mutation rate : 0.05
-//mutation type : swap
-//crossover window size : 2 | takes parent as 2 bestpaths, produces 2 children, replaces 2 worstpaths
-//fitness : 1/distance between cities
-
-//gap to draw two simulation
-var screenOffset;
-
-function setup() {
-
-
-  createPopulation();
-
-
-  cities = pop.cities.slice();
-
-  var d = calcDistance(cities);
-  recordDistance = d;
-  bestEver = cities.slice();
-
-  totalIterations = fact(totalCities)
-
-}
-
-function createPopulation() {
-    pop = new Population();
-    pop.init();
-}
-
 function City(name, location) {
     this.name = name;
     this.location = location;
 }
 
-
 function Population (initialData = [], startCity) {
     var self = this;
-    this.initialData = initialData; //obj with name and localization
-    this.count = populationCount;
+    this.initialData = initialData;
+    this.startCity = new City(startCity.name, startCity.coordinates);
+    this.count = 20;
     this.cityCount = initialData.length;
-    this.paths = []; // paths used for simulation between cities. Stores index of serial traversal of city
-    this.cities = []; // cities used in this simulation. Has screen position of each city
-    this.distances = []; //distances of routes. Sum of each city using respective path
+    this.paths = [];
+    this.cities = [];
+    this.distances = [];
     this.fitness = [];
-    this.bestPath = 0; //index of best path
+    this.bestPath = 0;
     this.useElitism = true;
     this.mutationRate = 0.05;
-    this.crossSize = 2; //floor(max(1, this.cityCount/3)); //take the crossover window of size = max(1, total cities/3);
+    this.crossSize = 2;
     this.bestDistanceEver = 999999999999999;
 
     this.init = () => {
-        console.log("init");
         this.initCities();
         this.initPaths();
         this.updateDistance();
@@ -96,7 +42,6 @@ function Population (initialData = [], startCity) {
     };
 
     this.initPaths = function () {
-        //generate random path indexes
         var path = [];
         for(var j=0;j < this.cityCount;j++){
             path.push(j);
@@ -108,19 +53,15 @@ function Population (initialData = [], startCity) {
     };
 
     this.updateDistance = function () {
-        //sum of route distance
         for(var i=0;i<this.count;i++){
             var sum = 0;
             for(j=0;j<this.cityCount-1;j++){
                 sum += sumOfSquareDiffs(this.cities[this.paths[i][j]].location, this.cities[this.paths[i][j + 1]].location);
             }
-            //ADD FROM START CITY A TO START CITY DISTANCE #AJ
-             
-            ///
+              sum += sumOfSquareDiffs(this.startCity.location, this.cities[0].location);
+              sum += sumOfSquareDiffs(this.cities[this.cities.length- 1].location, this.startCity.location);
 
             this.distances[i] = sum;
-            //console.log("d:"+sum);
-            //updating best available route uptil now
             if(sum < this.distances[this.bestPath]){
                 this.bestPath = i;
             }
@@ -140,35 +81,12 @@ function Population (initialData = [], startCity) {
         //pick 2 of the better (shorter) tours parents in the population and combine them to make 2 new child tours.
         //Hopefully, these children tour will be better than either parent
 
-        if(DEBUG)
-            console.log("Applying Crossover... ");
-        //find best 2 path as parents
         var parentA, parentB;
         var childA = [], childB = [];
 
         parentA = this.findBest();
         parentB = this.findBest([parentA]);
-        //console.log(parentA+" , "+ parentB);
 
-        /*
-        //get parent A
-        var maxP = 0;
-        for(i = 1;i<this.count;i++){
-            if(this.distances[i] < this.distances[maxP])
-                maxP = i;
-        }
-        parentA = maxP;
-        //console.log(parentA);
-
-        //get parent B
-        maxP = (parentA == 0) ? 1 : 0;
-        for(i = 0;i<this.count;i++){
-            if(i != parentA && this.distances[i] < this.distances[maxP])
-                maxP = i;
-        }
-        parentB = maxP;
-        //console.log(parentB);
-        */
 
         childA = Array(this.cityCount).fill(-1);
         childB = Array(this.cityCount).fill(-1);
@@ -217,8 +135,6 @@ function Population (initialData = [], startCity) {
             }
         }
 
-        if(DEBUG)
-        console.log("Updating population with new childrens");
         //replace new childrens with worst 2
         //find worst
         var worstPathA = this.findWorst();
@@ -227,18 +143,10 @@ function Population (initialData = [], startCity) {
         //replace with
         this.paths[worstPathA] = childA;
         this.paths[worstPathB] = childB;
-
-        if(DEBUG){
-            console.log("parents:" + this.paths[parentA] + " || "+this.paths[parentB]);
-            console.log("child A:"+childA);
-            console.log("child B:"+childB);
-        }
     }
 
     this.mutation = function () {
         //applying swap mutation
-        if(DEBUG)
-            console.log("Applying mutation with rate:"+this.mutationRate);
 
         if(this.mutationRate < Math.random()){
             var pathindex;// = Math.floor(random(this.count));
@@ -255,13 +163,7 @@ function Population (initialData = [], startCity) {
                 var cityindexA = Math.floor(Math.random(this.cityCount));
                 var cityindexB = Math.floor(Math.random(this.cityCount));
 
-                //if(DEBUG)
-                //    console.log("Mutated path: "+this.paths[pathindex]);
-
                 swap(this.paths[pathindex], cityindexA, cityindexB);
-
-                //if(DEBUG)
-                //    console.log("to path: "+this.paths[pathindex]);
             }
         }
     }
@@ -327,142 +229,12 @@ function Population (initialData = [], startCity) {
     }
 }
 
-function draw() {
-  randomTSP();
-
-  gaTSP();
-
-
-
-  iteration++;
-  percent = iteration/totalIterations * 100;
-  //console.log("%:"+ percent + " ti:"+totalIterations+" i:"+iteration)
-  //if(percent > 99.99)
-  //    noLoop();
-
-  text(iteration, 20, height - 20)
-
-}
-
-function gaTSP() {
-
-    //background(0);
-
-    //drawing cities
-    fill(255);
-    noStroke();
-    for (var i = 0; i < cities.length; i++) {
-      ellipse(screenOffset + cities[i].x, cities[i].y, 12, 12);
-    }
-
-    stroke(255);
-    strokeWeight(2);
-    noFill();
-    //drawing current second best
-    beginShape();
-    for (var i = 0; i < pop.cityCount; i++) {
-        var secondBest = pop.findBest([pop.bestPath]);
-        vertex(screenOffset + pop.cities[pop.paths[secondBest][i]].x, pop.cities[pop.paths[secondBest][i]].y);
-    }
-    endShape();
-
-    //draw current best path
-    stroke(155, 10, 255);
-    strokeWeight(4);
-    noFill();
-    beginShape();
-    for (var i = 0; i < pop.cityCount; i++) {
-        vertex(screenOffset + pop.cities[pop.paths[pop.bestPath][i]].x, pop.cities[pop.paths[pop.bestPath][i]].y);
-    }
-    endShape();
-
-
-    textSize(16);
-    fill(255);
-
-    pop.evolve();
-
-    //display best path distance
-    text(pop.distances[pop.bestPath], width - 200, height - 20);
-
-    //if elitism is off, draw best ever distance found so far in simulation
-    if(pop.useElitism === false){
-        text(pop.bestDistanceEver, width - 200, 20);
-    }
-}
-
-function randomTSP() {
-    //clear screen
-    background(0);
-
-    //drawing cities
-    fill(255);
-    noStroke();
-    for (var i = 0; i < cities.length; i++) {
-      ellipse(cities[i].x, cities[i].y, 12, 12);
-    }
-
-    //draw current processing path
-    stroke(255);
-    strokeWeight(2);
-    noFill();
-    beginShape();
-    for (var i = 0; i < cities.length; i++) {
-      vertex(cities[i].x, cities[i].y);
-    }
-    endShape();
-
-
-    //draw best path ever
-    stroke(155, 10, 255);
-    strokeWeight(4);
-    noFill();
-    beginShape();
-    for (var i = 0; i < cities.length; i++) {
-      vertex(bestEver[i].x, bestEver[i].y);
-    }
-    endShape();
-
-    //applying random swaps
-    var i = floor(random(cities.length));
-    var j = floor(random(cities.length));
-    swap(cities, i, j);
-
-    //is this better than before?
-    var d = calcDistance(cities);
-    if (d < recordDistance) {
-      recordDistance = d;
-      bestEver = cities.slice();
-    }
-
-    fill(255);
-    text(recordDistance, width/2 - 200, height - 20)
-}
-
 function swap(a, i, j) {
   var temp = a[i];
   a[i] = a[j];
   a[j] = temp;
 }
 
-
-function calcDistance(points) {
-  var sum = 0;
-  for (var i = 0; i < points.length - 1; i++) {
-    var d = dist(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
-    sum += d;
-  }
-  return sum;
-}
-
-function fact(i) {
-    var res = i;
-    while(i>1){
-        res *= i-1;
-        i--;
-    }
-    return res;
-}
 
 function shuffle(array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -472,8 +244,6 @@ function shuffle(array) {
         array[j] = temp;
     }
   }
-
-
 
   function sumOfSquareDiffs(oneVector, anotherVector) {
     var squareDiffs = oneVector.map(function(component, i) {
