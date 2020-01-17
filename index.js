@@ -64,11 +64,16 @@ calculatedClusters.forEach(cluster => {
     const {points} = cluster;
     var singlePopulation = new Population(points, startCity);
     singlePopulation.init();
-    for(var i =0; i < 5-0; i++) {
+    for(var i =0; i < 50; i++) {
         singlePopulation.evolve();
     }
     console.log(startCity.cityName);
-    singlePopulation.paths[singlePopulation.bestPath].forEach(x => {console.log(singlePopulation.cities[x].name)});
+    singlePopulation.paths[singlePopulation.bestPath].forEach(x => {
+		console.log(singlePopulation.cities[x].name); 
+		kMeansVisualisationMaker.addToRoute(singlePopulation.cities[x].location);
+	});
+	kMeansVisualisationMaker.buildRoute();
+	
     console.log(startCity.cityName);
     console.log("Distance: ", singlePopulation.bestDistanceEver);
     distanceSummary += singlePopulation.bestDistanceEver;
@@ -76,6 +81,7 @@ calculatedClusters.forEach(cluster => {
 });
 
 console.log("Total distance: ", distanceSummary);
+kMeansVisualisationMaker.drawRoute();
 
 //cityDistanceRetrieverClient.download(pointsArray); do not enable, will retrieve 30x30 cityDistanceMatrix from external api (870 requests).
 
