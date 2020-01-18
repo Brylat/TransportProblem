@@ -1,27 +1,43 @@
 <html>
 
-	<head>
-	  <script src="lib/jquery.min.js"></script>
-	  <script src="lib/d3.v3.min.js" charset="utf-8"></script>
-	  <script src="http://www.webglearth.com/v2/api.js"></script>
-	  <link rel="stylesheet" href="lib/bootstrap.min.css">
-		<style>
-		  html, body{padding: 0; margin: 0;}
-		  #earth_div{top: 0; right: 0; bottom: 0; left: 0; 
-					 background-color: #000; position: absolute !important;}
-		  </style>
-		  <title>title</title>
-	</head>
+<head>
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/d3.v3.min.js" charset="utf-8"></script>
+	<script src="http://www.webglearth.com/v2/api.js"></script>
+	<link rel="stylesheet" href="lib/bootstrap.min.css">
+	<style>
+		html,
+		body {
+			padding: 0;
+			margin: 0;
+		}
 
-	<body>
-      <div style="width: 75%; height: 75%" id="earth_div"></div>
-	</body>
-  
-	<script type="text/javascript" src="cityDistanceClient.js"></script>
-	<script type="text/javascript" src="cityDistanceMatrix.js"></script>
-	<script type="text/javascript" src="clusters.js"></script>
-	<script type="text/javascript" src="genetic.js"></script>
-	<script type="text/javascript" src="kMeansVisualisation.js"></script>
-	<script type="text/javascript" src="index.js"></script>
+		#earth_div {
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background-color: #000;
+			position: absolute !important;
+		}
+	</style>
+	<title>title</title>
+</head>
+
+<body>
+	<div style="width: 75%; height: 75%; float: left;" id="earth_div"></div>
+	<div style="width: 25%; height: 75%; float: right;" id="options_div">
+
+	</div>
+	<div style="clear: both;"></div>
+	<div style="width: 100%;" id="result-div"></div>
+</body>
+
+<script type="text/javascript" src="cityDistanceClient.js"></script>
+<script type="text/javascript" src="cityDistanceMatrix.js"></script>
+<script type="text/javascript" src="clusters.js"></script>
+<script type="text/javascript" src="genetic.js"></script>
+<script type="text/javascript" src="kMeansVisualisation.js"></script>
+<script type="text/javascript" src="index.js"></script>
 
 </html>

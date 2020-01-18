@@ -81,12 +81,20 @@ bestPopulations.forEach(population => {
 });
 kMeansVisualisationMaker.drawRoute();
 //Print results
-console.log(`Distance: ${bestRouteLength}km`);
+$("#result-div").html(" ");
+Log(`Distance: ${bestRouteLength}km`);
 let routeNumber = 1;
 bestPopulations.forEach(population => {
     let pathString = population.paths[population.bestPath]
         .reduce((acc, curr) => { return acc += ` -> ${population.cities[curr].name}` }, startCity.cityName);
-    console.log(`Route ${routeNumber}: `, `${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver}km`);
+    Log(`Route ${routeNumber}: ${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver}km`);
     routeNumber++;
 });
 
+
+
+function Log(text) {
+    console.log(text);
+    const old = $("#result-div").html()
+    $("#result-div").html(`${old}<br /> ${text}`);
+}
