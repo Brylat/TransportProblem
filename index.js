@@ -2,6 +2,8 @@ const clusterMaker = clusters;
 const kMeansVisualisationMaker = kMeansVisualisation;
 const cityDistanceRetrieverClient = cityDistanceClient;
 
+const USE_LINEAR_DISTANCE = false;
+
 clusterMaker.k(5);
 clusterMaker.iterations(750);
 clusterMaker.capacity(1000);
@@ -51,7 +53,7 @@ for (var m = 0; m < 50; m++) {
     let currentPopulations = [];
     calculatedClusters.forEach(cluster => {
         const { points } = cluster;
-        let singlePopulation = new Population(points, startCity);
+        let singlePopulation = new Population(points, startCity, USE_LINEAR_DISTANCE);
         singlePopulation.init();
         for (var i = 0; i < 50; i++) {
             singlePopulation.evolve();
@@ -79,12 +81,12 @@ bestPopulations.forEach(population => {
 });
 kMeansVisualisationMaker.drawRoute();
 //Print results
-console.log(`Distance: ${bestRouteLength}m`);
+console.log(`Distance: ${bestRouteLength}km`);
 let routeNumber = 1;
 bestPopulations.forEach(population => {
     let pathString = population.paths[population.bestPath]
         .reduce((acc, curr) => { return acc += ` -> ${population.cities[curr].name}` }, startCity.cityName);
-    console.log(`Route ${routeNumber}: `, `${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver}m`);
+    console.log(`Route ${routeNumber}: `, `${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver}km`);
     routeNumber++;
 });
 

@@ -956,7 +956,7 @@ function initCityDistanceTwoDimensionArray(){
 
 function getDistanceByStartEndCity(startCity, endCity) {
 	try {
-		return JSON.parse(matrix[startCity][endCity]).distance;
+		return JSON.parse(matrix[startCity][endCity]).distance/1000.00;
 	} catch {
 		console.error("Distance mtrix problem");
 		return 0;
