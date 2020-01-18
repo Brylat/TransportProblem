@@ -42,7 +42,7 @@ function init() {
 	colorsRoute = ['#f60404', '#f8e604', '#66ff33', '#000000', '#00ffcc', '#0039e6', '#b3b3cc', '#ff4dff'];
 	icons = ['icons/9.png', 'icons/8.png', 'icons/7.png', 'icons/6.png', 'icons/5.png', 'icons/4.png', 'icons/3.png', 'icons/2.png', 'icons/1.png', ];
 	WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		attribution: '© OpenStreetMap contributors'
+		attribution: 'ï¿½ OpenStreetMap contributors'
 	}).addTo(earth);
 }
 
@@ -70,7 +70,7 @@ function setFocusCoordinates(points) {
 
 function drawClusters() {
 	this.markers.map(marker => marker.addTo(earth));
-	earth.setZoom(2);
+	earth.setZoom(4);
 	earth.panTo(coordinatesToFocus, 1);
 	
 	console.log("przypisane miasta: " + foundPoints/2);
@@ -94,7 +94,7 @@ function buildRoute() {
           opacity: 0,
           fillColor: '#f00',
           fillOpacity: 0.01,
-          weight: 5
+          weight: 4
         })
 		routes.push(route);
 		
