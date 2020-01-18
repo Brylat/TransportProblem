@@ -47,13 +47,13 @@ function init() {
 }
 
 function buildClusters(pointsArray) {
-	pointsArray.map(p=> foundPoints = foundPoints + p.length)
+	pointsArray.map(p=> foundPoints = foundPoints + p.location.length)
 	
 	var icon = icons.pop();
 	var carIndex = ++index;
 	pointsArray.map(points => {
-		setFocusCoordinates(points);
-		markers.push(WE.marker(points, icon, 25, 25).bindPopup("<b>Punk dla samochodu nr: " + carIndex +"</b><br>Miejscowosc: todo przekazac to<br /><span style='font-size:10px;color:#999'>Koordynaty: " + points + "</span>", {maxWidth: 150, closeButton: true}));
+		setFocusCoordinates(points.location);
+		markers.push(WE.marker(points.location, icon, 25, 25).bindPopup("<b>Punk dla samochodu nr: " + carIndex +"</b><br>Miejscowosc: " + points.name + " <br /><span style='font-size:10px;color:#999'>Koordynaty: " + points.location + "</span>", {maxWidth: 150, closeButton: true}));
 	})
 	addWarehouseToMap();
 }
@@ -70,7 +70,7 @@ function setFocusCoordinates(points) {
 
 function drawClusters() {
 	this.markers.map(marker => marker.addTo(earth));
-	earth.setZoom(4);
+	earth.setZoom(5);
 	earth.panTo(coordinatesToFocus, 1);
 	
 	console.log("przypisane miasta: " + foundPoints/2);
