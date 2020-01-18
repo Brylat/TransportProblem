@@ -1,5 +1,5 @@
 //OPTIONS
-const USE_LINEAR_DISTANCE = false;
+const USE_LINEAR_DISTANCE = true;
 const CLUSTERING_ITERATIONS_COUNT = 750;
 const POPULATION_COUNT = 50;
 const WHOLE_PROCESS_ITERATIONS_COUNT = 50;
@@ -59,7 +59,8 @@ for (var m = 0; m < WHOLE_PROCESS_ITERATIONS_COUNT; m++) {
     let currentPopulations = [];
     calculatedClusters.forEach(cluster => {
         const { points } = cluster;
-        let singlePopulation = new Population(points, startCity, USE_LINEAR_DISTANCE, POPULATION_COUNT);
+        const usedCapacity = cluster.points.reduce((acc, curr) => {return acc + curr.capacity}, 0)
+        let singlePopulation = new Population(points, startCity, USE_LINEAR_DISTANCE, POPULATION_COUNT, usedCapacity);
         singlePopulation.init();
         for (var i = 0; i < GENERATIONS_COUNT; i++) {
             singlePopulation.evolve();
@@ -93,7 +94,7 @@ let routeNumber = 1;
 bestPopulations.forEach(population => {
     let pathString = population.paths[population.bestPath]
         .reduce((acc, curr) => { return acc += ` -> ${population.cities[curr].name}` }, startCity.cityName);
-    Log(`Route ${routeNumber}: ${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver.toFixed(3)}km`);
+    Log(`Route ${routeNumber}: ${pathString} -> ${startCity.cityName}, Used capacity: ${population.usedCapacity}, Distance: ${population.bestDistanceEver.toFixed(3)}km`);
     routeNumber++;
 });
 

@@ -3,7 +3,7 @@ function City(name, location) {
     this.location = location;
 }
 
-function Population(initialData = [], startCity, useLinearDistanse = true, populationCount = 50) {
+function Population(initialData = [], startCity, useLinearDistanse = true, populationCount = 50, usedCapacity = 0) {
     var self = this;
     this.initialData = initialData;
     this.startCity = new City(startCity.cityName, startCity.coordinates);
@@ -20,7 +20,7 @@ function Population(initialData = [], startCity, useLinearDistanse = true, popul
     this.useLinearDistanse = useLinearDistanse;
     this.bestDistanceEver = 999999999999999;
     this.cityDistanceMatrixRepository = cityDistanceMatrix;
-
+    this.usedCapacity = usedCapacity;
 
     this.init = () => {
         this.cityDistanceMatrixRepository.init();

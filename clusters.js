@@ -17,7 +17,7 @@ const clusters = {
     return centroids.map(function(centroid) {
       return {
         centroid: centroid.location(),
-        points: points.filter(function(point) { return point.label() == centroid.label() }).map(function(point) { return {location: point.location(), name: point.cityName()} }),
+        points: points.filter(function(point) { return point.label() == centroid.label() }).map(function(point) { return {location: point.location(), name: point.cityName(), capacity: point.capacity()} }),
       };
     });
   },
