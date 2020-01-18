@@ -1,4 +1,5 @@
 const kMeansVisualisation = {
+	warehouseLocation: [0, 0],
 	init: function () {
 		init();
 	},
@@ -15,13 +16,16 @@ const kMeansVisualisation = {
 		addToRoute(array);
 	},
 	buildRoute: function () {
-		buildRoute();
+		buildRoute(this.warehouseLocation);
 	},
 	drawRoute: function () {
 		drawRoute();
+	},
+	addWarehouseToMap: function(location) {
+		this.warehouseLocation = location;
+		addWarehouseToMap(location);
 	}
 }
-var baseCoordinates = [50.06446, 19.94503]
 
 var earth;
 var markers = [];
@@ -55,11 +59,10 @@ function buildClusters(pointsArray) {
 		setFocusCoordinates(points.location);
 		markers.push(WE.marker(points.location, icon, 25, 25).bindPopup("<b>Punk dla samochodu nr: " + carIndex +"</b><br>Miejscowosc: " + points.name + " <br /><span style='font-size:10px;color:#999'>Koordynaty: " + points.location + "</span>", {maxWidth: 150, closeButton: true}));
 	})
-	addWarehouseToMap();
 }
 
-function addWarehouseToMap() {
-	markers.push(WE.marker(baseCoordinates, 'icons/warehouse.png', 35, 35).bindPopup("<b>Magazyn glowny </b><br>Miejscowosc: Krakow<br /><span style='font-size:10px;color:#999'>Koordynaty: " + baseCoordinates + "</span>", {maxWidth: 150, closeButton: true}));
+function addWarehouseToMap(location) {
+	markers.push(WE.marker(location, 'icons/warehouse.png', 25, 25).bindPopup("<b>Magazyn glowny </b><br>Miejscowosc: Krakow<br /><span style='font-size:10px;color:#999'>Koordynaty: " + location + "</span>", {maxWidth: 150, closeButton: true}));
 }
 
 function setFocusCoordinates(points) {
@@ -87,11 +90,11 @@ function addToRoute(array) {
 	routeTemp.push(array);
 }
 
-function buildRoute() {
-	addBaseToRoutes();
+function buildRoute(warehouseLocation) {
+	addBaseToRoutes(warehouseLocation);
 	var route = WE.polygon(routeTemp, {
           color: colorsRoute.pop(),
-          opacity: 0,
+          opacity: 1,
           fillColor: '#f00',
           fillOpacity: 0.01,
           weight: 4
@@ -101,9 +104,9 @@ function buildRoute() {
 		clearTempRoute();
 }
 
-function addBaseToRoutes() {
-	routeTemp.push(baseCoordinates);
-	routeTemp.unshift(baseCoordinates);
+function addBaseToRoutes(warehouseLocation) {
+	routeTemp.push(warehouseLocation);
+	routeTemp.unshift(warehouseLocation);
 }
 
 function clearTempRoute() {

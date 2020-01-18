@@ -78,6 +78,7 @@ for (var m = 0; m < WHOLE_PROCESS_ITERATIONS_COUNT; m++) {
 //Draw points
 kMeansVisualisationMaker.init();
 clusterWithBestRoute.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points));
+kMeansVisualisationMaker.addWarehouseToMap(startCity.coordinates);
 kMeansVisualisationMaker.drawClustersVisualisation();
 //Draw route
 bestPopulations.forEach(population => {
