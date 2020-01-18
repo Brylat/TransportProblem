@@ -1,9 +1,9 @@
 //OPTIONS
-const USE_LINEAR_DISTANCE = true;
-const CLUSTERING_ITERATIONS_COUNT = 750;
+const USE_LINEAR_DISTANCE = false;
+const CLUSTERING_ITERATIONS_COUNT = 500;
 const POPULATION_COUNT = 50;
-const WHOLE_PROCESS_ITERATIONS_COUNT = 50;
-const GENERATIONS_COUNT = 50;
+const WHOLE_PROCESS_ITERATIONS_COUNT = 5;
+const GENERATIONS_COUNT = 1000;
 //
 
 const clusterMaker = clusters;
@@ -53,13 +53,14 @@ let calculatedClusters = clusterMaker.clusters();
 let bestPopulations = null;
 let bestRouteLength = -1;
 let clusterWithBestRoute = null;
+var t0 = performance.now();
 for (var m = 0; m < WHOLE_PROCESS_ITERATIONS_COUNT; m++) {
     calculatedClusters = clusterMaker.clusters();
     let distanceSummary = 0;
     let currentPopulations = [];
     calculatedClusters.forEach(cluster => {
         const { points } = cluster;
-        const usedCapacity = cluster.points.reduce((acc, curr) => {return acc + curr.capacity}, 0)
+        const usedCapacity = cluster.points.reduce((acc, curr) => { return acc + curr.capacity }, 0)
         let singlePopulation = new Population(points, startCity, USE_LINEAR_DISTANCE, POPULATION_COUNT, usedCapacity);
         singlePopulation.init();
         for (var i = 0; i < GENERATIONS_COUNT; i++) {
@@ -74,7 +75,7 @@ for (var m = 0; m < WHOLE_PROCESS_ITERATIONS_COUNT; m++) {
         clusterWithBestRoute = calculatedClusters;
     }
 }
-
+var t1 = performance.now();
 //Draw points
 visualisationMaker.init();
 clusterWithBestRoute.map(clusters => visualisationMaker.buildClusters(clusters.points));
@@ -98,9 +99,26 @@ bestPopulations.forEach(population => {
     Log(`Route ${routeNumber}: ${pathString} -> ${startCity.cityName}, Used capacity: ${population.usedCapacity}, Distance: ${population.bestDistanceEver.toFixed(3)}km`);
     routeNumber++;
 });
+Log(`Execution time: ${timeConversion(t1 - t0)}`)
 
 function Log(text) {
     console.log(text);
     const old = $("#result-div").html()
     $("#result-div").html(`${old}<br /> ${text}`);
+}
+
+function timeConversion(millisec) {
+    var seconds = (millisec / 1000).toFixed(1);
+    var minutes = (millisec / (1000 * 60)).toFixed(1);
+    var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
+    var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
+    if (seconds < 60) {
+        return seconds + " Sec";
+    } else if (minutes < 60) {
+        return minutes + " Min";
+    } else if (hours < 24) {
+        return hours + " Hrs";
+    } else {
+        return days + " Days"
+    }
 }
