@@ -1,4 +1,4 @@
-const kMeansVisualisation = {
+const visualisation = {
 	init: function () {
 		init();
 	},
@@ -39,7 +39,7 @@ var foundPoints = 0;
 function init() {
 	earth = new WE.map('earth_div');
 	colors = ['#f60404', '#f8e604', '#66ff33', '#000000', '#00ffcc', '#0039e6', '#b3b3cc', '#ff4dff'];
-	colorsRoute = ['#f60404', '#f8e604', '#66ff33', '#000000', '#00ffcc', '#0039e6', '#b3b3cc', '#ff4dff'];
+	colorsRoute = ['#f60404', '#f8e604', '#66ff33', '#000000', '#00ffcc', '#0039e6', '#00ff04', '#ff4dff'];
 	icons = ['icons/9.png', 'icons/8.png', 'icons/7.png', 'icons/6.png', 'icons/5.png', 'icons/4.png', 'icons/3.png', 'icons/2.png', 'icons/1.png', ];
 	WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '� OpenStreetMap contributors'
