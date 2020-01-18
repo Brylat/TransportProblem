@@ -3,11 +3,11 @@ function City(name, location) {
     this.location = location;
 }
 
-function Population(initialData = [], startCity, useLinearDistanse = true) {
+function Population(initialData = [], startCity, useLinearDistanse = true, populationCount = 50) {
     var self = this;
     this.initialData = initialData;
     this.startCity = new City(startCity.cityName, startCity.coordinates);
-    this.count = 50;
+    this.count = populationCount;
     this.cityCount = initialData.length;
     this.paths = [];
     this.cities = [];
