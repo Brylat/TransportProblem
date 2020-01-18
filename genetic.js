@@ -59,12 +59,9 @@ function Population (initialData = [], startCity) {
         for(var i=0;i<this.count;i++){
             var sum = 0;
             for(j=0;j<this.cityCount-1;j++){
-                //sum += sumOfSquareDiffs(this.cities[this.paths[i][j]].location, this.cities[this.paths[i][j + 1]].location);
                 sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.cities[this.paths[i][j]].name, this.cities[this.paths[i][j + 1]].name);
             }
-              //sum += sumOfSquareDiffs(this.startCity.location, this.cities[0].location);
               sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.startCity.name, this.cities[0].name);
-              //sum += sumOfSquareDiffs(this.cities[this.cities.length- 1].location, this.startCity.location);
               sum += this.cityDistanceMatrixRepository.getDistanceByStartEndCity(this.cities[this.cities.length- 1].name, this.startCity.name);
 
             this.distances[i] = sum;
@@ -84,9 +81,6 @@ function Population (initialData = [], startCity) {
     }
 
     this.crossover = function () {
-        //pick 2 of the better (shorter) tours parents in the population and combine them to make 2 new child tours.
-        //Hopefully, these children tour will be better than either parent
-
         var parentA, parentB;
         var childA = [], childB = [];
 
@@ -97,23 +91,14 @@ function Population (initialData = [], startCity) {
         childA = Array(this.cityCount).fill(-1);
         childB = Array(this.cityCount).fill(-1);
 
-        //create offsprings
-
-        //console.log("win:"+crossSize);
         var crossPos = Math.floor(Math.random(this.cityCount - this.crossSize));
-        //console.log("pos:"+crossPos);
 
-        //child A
         for(var i=0;i<this.cityCount;i++){
             if(i >= crossPos && i <= crossPos+this.crossSize){
-                //if we are in crossover window area then copy as it is from parent A
                 childA[i] = this.paths[parentA][i];
             }
         }
         for(var i=0, j = 0; i<this.cityCount; i++){
-            //copy from parent B if not already added from parent A
-
-            //look for empty spot in child
             while(childA[j] != -1 && j<this.cityCount) j++;
 
             if(childA.indexOf(this.paths[parentB][i]) == -1){
@@ -122,18 +107,13 @@ function Population (initialData = [], startCity) {
         }
 
         crossPos = Math.floor(Math.random(this.cityCount - this.crossSize));
-
-        //now child B, switch parents
         for(var i=0; i<this.cityCount; i++){
             if(i >= crossPos && i <= crossPos+this.crossSize){
-                //if we are in crossover window area then copy as it is from parent B
                 childB[i] = this.paths[parentB][i];
             }
         }
         for(var i=0, j = 0; i<this.cityCount; i++){
-            //copy from parent A if not already added from parent B
 
-            //look for empty spot in child
             while(childB[j] != -1 && j<this.cityCount) j++;
 
             if(childB.indexOf(this.paths[parentA][i]) == -1){
@@ -141,21 +121,15 @@ function Population (initialData = [], startCity) {
             }
         }
 
-        //replace new childrens with worst 2
-        //find worst
         var worstPathA = this.findWorst();
         var worstPathB = this.findWorst([worstPathA]);
-
-        //replace with
         this.paths[worstPathA] = childA;
         this.paths[worstPathB] = childB;
     }
 
     this.mutation = function () {
-        //applying swap mutation
-
         if(this.mutationRate < Math.random()){
-            var pathindex;// = Math.floor(random(this.count));
+            var pathindex;
 
             var currentBestPath = this.findBest();
 
@@ -163,7 +137,6 @@ function Population (initialData = [], startCity) {
 
                 if(this.useElitism === true && currentBestPath == pathindex)
                 {
-                    //dont apply mutation to best fitness path if elitism on
                     continue;
                 }
                 var cityindexA = Math.floor(Math.random(this.cityCount));
@@ -174,7 +147,6 @@ function Population (initialData = [], startCity) {
         }
     }
 
-    //find path with best fitness, ignoring paths provided in argument
     this.findBest = function (ignoreList) {
         var best = 0;
         ignoreList = ignoreList || [];
@@ -204,7 +176,6 @@ function Population (initialData = [], startCity) {
         return best;
     }
 
-    //find path with lowest fitness, ignoring paths provided in argument
     this.findWorst = function (ignoreList) {
         var worst = 0;
         ignoreList = ignoreList || [];

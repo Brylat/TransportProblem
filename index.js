@@ -78,4 +78,13 @@ bestPopulations.forEach(population => {
     kMeansVisualisationMaker.buildRoute();
 });
 kMeansVisualisationMaker.drawRoute();
+//Print results
+console.log(`Distance: ${bestRouteLength}m`);
+let routeNumber = 1;
+bestPopulations.forEach(population => {
+    let pathString = population.paths[population.bestPath]
+        .reduce((acc, curr) => { return acc += ` -> ${population.cities[curr].name}` }, startCity.cityName);
+    console.log(`Route ${routeNumber}: `, `${pathString} -> ${startCity.cityName}, Distance: ${population.bestDistanceEver}m`);
+    routeNumber++;
+});
 
