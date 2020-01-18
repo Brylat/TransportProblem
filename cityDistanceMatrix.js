@@ -958,11 +958,9 @@ function getDistanceByStartEndCity(startCity, endCity) {
 	try {
 		return matrix[startCity][endCity].distance/1000.00;
 	} catch {
-		console.error("Distance mtrix problem");
+		console.error("Distance matrix problem");
 		return 0;
 	}
-
-	
 }
 
 function getDurationByStartEndCity(startCity, endCity) {

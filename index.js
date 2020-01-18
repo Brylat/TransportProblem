@@ -7,7 +7,7 @@ const GENERATIONS_COUNT = 50;
 //
 
 const clusterMaker = clusters;
-const kMeansVisualisationMaker = kMeansVisualisation;
+const visualisationMaker = visualisation;
 const cityDistanceRetrieverClient = cityDistanceClient;
 
 clusterMaker.k(5);
@@ -76,18 +76,18 @@ for (var m = 0; m < WHOLE_PROCESS_ITERATIONS_COUNT; m++) {
 }
 
 //Draw points
-kMeansVisualisationMaker.init();
-clusterWithBestRoute.map(clusters => kMeansVisualisationMaker.buildClusters(clusters.points));
-kMeansVisualisationMaker.addWarehouseToMap(startCity.coordinates);
-kMeansVisualisationMaker.drawClustersVisualisation();
+visualisationMaker.init();
+clusterWithBestRoute.map(clusters => visualisationMaker.buildClusters(clusters.points));
+visualisationMaker.addWarehouseToMap(startCity.coordinates);
+visualisationMaker.drawClustersVisualisation();
 //Draw route
 bestPopulations.forEach(population => {
     population.paths[population.bestPath].forEach(x => {
-        kMeansVisualisationMaker.addToRoute(population.cities[x].location);
+        visualisationMaker.addToRoute(population.cities[x].location);
     });
-    kMeansVisualisationMaker.buildRoute();
+    visualisationMaker.buildRoute();
 });
-kMeansVisualisationMaker.drawRoute();
+visualisationMaker.drawRoute();
 //Print results
 $("#result-div").html(" ");
 Log(`Distance: ${bestRouteLength.toFixed(3)}km`);
@@ -98,8 +98,6 @@ bestPopulations.forEach(population => {
     Log(`Route ${routeNumber}: ${pathString} -> ${startCity.cityName}, Used capacity: ${population.usedCapacity}, Distance: ${population.bestDistanceEver.toFixed(3)}km`);
     routeNumber++;
 });
-
-
 
 function Log(text) {
     console.log(text);

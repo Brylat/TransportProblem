@@ -32,16 +32,17 @@ function getCityDistances(point1, point2) {
 	}
 	return httpResponse;
 }
+
 function httpGet(coordinates1, coordinates2) {
 	var httpUrlString = "http://router.project-osrm.org/route/v1/driving/" + coordinates1.coordinates[1] + "," + coordinates1.coordinates[0] + ";" + coordinates2.coordinates[1] + "," + coordinates2.coordinates[0] + "?overview=false";
 	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.open("GET", httpUrlString, false); // false for synchronous request
+	xmlHttp.open("GET", httpUrlString, false);
 	xmlHttp.send(null);
 	return xmlHttp.responseText;
 }
 
 function sleepFor(sleepDuration) {
 	var now = new Date().getTime();
-	while (new Date().getTime() < now + sleepDuration) { /* do nothing */
+	while (new Date().getTime() < now + sleepDuration) {
 	}
 }
