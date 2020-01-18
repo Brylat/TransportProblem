@@ -950,13 +950,13 @@ function initCityDistanceTwoDimensionArray(){
 		if(typeof matrix[entry.cityStart] === 'undefined'){
 			matrix[entry.cityStart] = new Array(citiesNumber);
 		}
-		matrix[entry.cityStart][entry.cityEnd] = "{\"distance\": " + entry.distance + ", \"duration\": " + entry.duration + "}"
+		matrix[entry.cityStart][entry.cityEnd] = { distance: entry.distance, duration: entry.duration };
 	})
 }
 
 function getDistanceByStartEndCity(startCity, endCity) {
 	try {
-		return JSON.parse(matrix[startCity][endCity]).distance/1000.00;
+		return matrix[startCity][endCity].distance/1000.00;
 	} catch {
 		console.error("Distance mtrix problem");
 		return 0;
@@ -966,5 +966,5 @@ function getDistanceByStartEndCity(startCity, endCity) {
 }
 
 function getDurationByStartEndCity(startCity, endCity) {
-	return JSON.parse(matrix[startCity][endCity]).duration;
+	return matrix[startCity][endCity].duration;
 }
